@@ -21,8 +21,8 @@ class ContactsRepository {
   static const String mainTag = '## ContactsRepository';
   final String _nameContactsDbTable = 'contacts';
     final _apiUrl =
-        'https://randomuser.me/api/?results=20&inc=name,picture,email&noinfo';
-        
+        'https://randomuser.me/api/?results=2&inc=name,picture,email&noinfo';
+
   Future<List<ContactDataModel>> getContactsRepo() async {
     // either load from Api or from database
     try {
@@ -39,7 +39,7 @@ class ContactsRepository {
   Future<List<ContactDataModel>> changeContactsRepo() async {
     // Completely change contacts
     try {
-      _removeAllContactsRepo();
+      await _removeAllContactsRepo();
       return await _loadContactsFromApiAndInsertIntoDb(_apiUrl);
     } catch (e) {
       rethrow;
@@ -56,11 +56,9 @@ class ContactsRepository {
       }
       final extractedData = await contactsApiService.loadContactsData(url);
       final List extractedListData = extractedData['results'].toList();
-      print(
-          '$mainTag._loadContactsFromApi() extractedListData: $extractedListData');
-      extractedListData.forEach((element) {
+      extractedListData.forEach((element) async{
         loadedContacts.add(ContactDataModel.fromJsonApi(element));
-        _insertContactIntoDb(ContactDataModel.fromJsonApi(element));
+        await _insertContactIntoDb(ContactDataModel.fromJsonApi(element));
       });
       return loadedContacts;
     } catch (e) {
@@ -97,7 +95,7 @@ class ContactsRepository {
     }
   }
 
-  Future<void> updateContactRepo(
+  Future<void> updateContactByIdRepo(
       String contactId, ContactDataModel contact) async {
     try {
       await sqliteDbService.update(
@@ -116,7 +114,7 @@ class ContactsRepository {
     return;
   }
 
-  Future<void> removeContactRepo(String contactId) async {
+  Future<void> removeContactByIdRepo(String contactId) async {
     await sqliteDbService.delete(_nameContactsDbTable,
         where: "id = \"$contactId\"");
     return;

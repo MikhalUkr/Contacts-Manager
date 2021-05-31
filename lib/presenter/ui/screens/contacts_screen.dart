@@ -17,14 +17,14 @@ class ContactsScreen extends StatelessWidget {
           actions: [
             IconButton(
               onPressed: () => Provider.of<Contacts>(context, listen: false)
-                  .changeContactData(),
+                  .changeContacts(),
               icon: Icon(Icons.refresh),
             )
           ],
         ),
         body: FutureBuilder(
           future:
-              Provider.of<Contacts>(context, listen: false).getContactData(),
+              Provider.of<Contacts>(context, listen: false).getContacts(),
           builder: (ctx, snapshot) =>
               snapshot.connectionState == ConnectionState.waiting
                   ? Center(child: CircularProgressIndicator())

@@ -1,3 +1,4 @@
+import 'dart:developer';
 
 import 'package:contacts_manager/app/service_locator.dart';
 import 'package:contacts_manager/repositories/contacts_repository.dart';
@@ -13,10 +14,11 @@ class Contacts with ChangeNotifier {
   ContactsRepository _contactsRepository = getIt.get<ContactsRepository>();
 
   List<ContactDataModel> get items {
+    // print('$mainTag.items: $items');
     return [..._items];
   }
 
-  ContactDataModel getContactByUserId(String contactId){
+  ContactDataModel getContactByUserId(String contactId) {
     try {
       final contact = items.firstWhere((contact) => contact.id == contactId);
       return contact;
@@ -25,7 +27,7 @@ class Contacts with ChangeNotifier {
     }
   }
 
-  Future<void> getContactData() async {
+  Future<void> getContacts() async {
     try {
       final loadedItems = await _contactsRepository.getContactsRepo();
       _items = loadedItems;
@@ -35,7 +37,7 @@ class Contacts with ChangeNotifier {
     }
   }
 
-    Future<void> changeContactData() async {
+  Future<void> changeContacts() async {
     try {
       final loadedItems = await _contactsRepository.changeContactsRepo();
       _items = loadedItems;
@@ -46,16 +48,16 @@ class Contacts with ChangeNotifier {
   }
 
   Future<void> removeContactById(String contactId) async {
-    await _contactsRepository.removeContactRepo(contactId);
-    getContactData();
+    log('$mainTag.removeContactById() contactId: $contactId');
+    await _contactsRepository.removeContactByIdRepo(contactId);
+    await getContacts();
     return;
   }
 
-  Future<void> updateContactById(String contactId, ContactDataModel data) async {
-    await _contactsRepository.updateContactRepo(contactId, data);
-    getContactData();
+  Future<void> updateContactById(
+      String contactId, ContactDataModel data) async {
+    await _contactsRepository.updateContactByIdRepo(contactId, data);
+    await getContacts();
     return;
   }
-
-
 }

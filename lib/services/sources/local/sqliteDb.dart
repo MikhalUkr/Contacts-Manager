@@ -22,13 +22,14 @@ class SqliteDbService {
     );
   }
 
-  Future<void> insert(String table, Map<String, dynamic> data) async {
+  Future<int> insert(String table, Map<String, dynamic> data) async {
     // int count = await (await database(table)).insert(
     //  or:
     try {
       final db = await database(table);
+      int count = 0;
       if (db.isOpen) {
-        await db.insert(
+        count = await db.insert(
           table,
           data,
           conflictAlgorithm: sql.ConflictAlgorithm.replace,
@@ -36,7 +37,7 @@ class SqliteDbService {
       } else {
         log('## [E] $mainTag.insert() Database is not Open');
       }
-      return;
+      return count;
     } catch (e) {
       rethrow;
     }
@@ -121,6 +122,7 @@ class SqliteDbService {
         conflictAlgorithm: conflictAlgorithm,
       );
     }
+    log('$mainTag.update() count: $count');
     return count;
   }
 
@@ -146,14 +148,24 @@ class SqliteDbService {
   Future<int> delete(String table,
       {String? where, List<dynamic>? whereArgs}) async {
     int count = 0;
-    final db = await database(table);
-    if (db.isOpen) {
-      count = await db.delete(
-        table,
-        where: where,
-        whereArgs: whereArgs,
-      );
+    try {
+      final db = await database(table);
+      if (db.isOpen) {
+        for (int index = 1; index <= 10 && count == 0; index++) {
+          log('$mainTag.delete() index: $index; where: $where');
+          count = await db.delete(
+            table,
+            where: where,
+            whereArgs: whereArgs,
+          );
+        }
+      } else {
+        log('## [E] $mainTag.getData() Database is not Open');
+      }
+      log('$mainTag.delete() count: $count');
+      return count;
+    } catch (e) {
+      rethrow;
     }
-    return count;
   }
 }

@@ -1,4 +1,6 @@
 
+import 'dart:developer';
+
 import 'package:contacts_manager/presenter/providers/contacts.dart';
 import 'package:flutter/material.dart';
 
@@ -21,6 +23,7 @@ class DetailContactScreen extends StatelessWidget {
           actions: [
             IconButton(
               onPressed: () {
+                log('$mainTag.onPressed: name: ${contact.name} id: ${contact.id}');
                 Provider.of<Contacts>(context, listen: false)
                     .removeContactById(contact.id);
                 Navigator.of(context).pop();

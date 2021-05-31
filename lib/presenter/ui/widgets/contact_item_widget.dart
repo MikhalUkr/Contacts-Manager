@@ -92,7 +92,7 @@ class _ContactItemState extends State<ContactItem> {
           style: TextStyle(color: Theme.of(context).errorColor),
         ),
         content: Text(
-          'Do you want to remove this item from the cart?',
+          'Do you want to remove this contact from the contacts?',
           textAlign: TextAlign.center,
         ),
         actions: [
@@ -133,8 +133,8 @@ class _ContactItemState extends State<ContactItem> {
     return;
   }
 
-  void _editContactCallback(ContactDataModel editedContact) {
-    Provider.of<Contacts>(context, listen: false).updateContactById(
+  void _editContactCallback(ContactDataModel editedContact) async{
+    await Provider.of<Contacts>(context, listen: false).updateContactById(
       editedContact.id,
       editedContact,
     );
