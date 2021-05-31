@@ -151,14 +151,11 @@ class SqliteDbService {
     try {
       final db = await database(table);
       if (db.isOpen) {
-        for (int index = 1; index <= 10 && count == 0; index++) {
-          log('$mainTag.delete() index: $index; where: $where');
-          count = await db.delete(
-            table,
-            where: where,
-            whereArgs: whereArgs,
-          );
-        }
+        count = await db.delete(
+          table,
+          where: where,
+          whereArgs: whereArgs,
+        );
       } else {
         log('## [E] $mainTag.getData() Database is not Open');
       }

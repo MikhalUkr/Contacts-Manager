@@ -21,7 +21,7 @@ class ContactsRepository {
   static const String mainTag = '## ContactsRepository';
   final String _nameContactsDbTable = 'contacts';
     final _apiUrl =
-        'https://randomuser.me/api/?results=2&inc=name,picture,email&noinfo';
+        'https://randomuser.me/api/?results=20&inc=name,picture,email&noinfo';
 
   Future<List<ContactDataModel>> getContactsRepo() async {
     // either load from Api or from database

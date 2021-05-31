@@ -14,7 +14,6 @@ class Contacts with ChangeNotifier {
   ContactsRepository _contactsRepository = getIt.get<ContactsRepository>();
 
   List<ContactDataModel> get items {
-    // print('$mainTag.items: $items');
     return [..._items];
   }
 
