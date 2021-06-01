@@ -26,7 +26,6 @@ class ContactDataModel {
   }
 
   factory ContactDataModel.fromJsonDb(Json json) {
-    // List<Map<String, dynamic>> results = json['results'];
     return ContactDataModel(
         id: json['id'],
         name: json['name'],
@@ -47,6 +46,6 @@ class ContactDataModel {
 
   @override
   String toString() {
-    return 'UserDataModel: id: $id; name: $name; surname: $surname; email: $email; image: $image';
+    return 'UserDataModel: id: $id; name: $name; surname: $surname; email: $email; image: $image;\n';
   }
 }

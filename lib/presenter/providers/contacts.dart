@@ -47,7 +47,6 @@ class Contacts with ChangeNotifier {
   }
 
   Future<void> removeContactById(String contactId) async {
-    log('$mainTag.removeContactById() contactId: $contactId');
     await _contactsRepository.removeContactByIdRepo(contactId);
     await getContacts();
     return;

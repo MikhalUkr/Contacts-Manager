@@ -1,3 +1,4 @@
+import 'dart:developer';
 
 import 'package:contacts_manager/models/contacts/contact_data_model.dart';
 import 'package:contacts_manager/services/sources/api/contacts_api.dart';
@@ -20,10 +21,10 @@ class ContactsRepository {
 
   static const String mainTag = '## ContactsRepository';
   final String _nameContactsDbTable = 'contacts';
-    final _apiUrl =
-        'https://randomuser.me/api/?results=20&inc=name,picture,email&noinfo';
+  final _apiUrl =
+      'https://randomuser.me/api/?results=20&inc=name,picture,email&noinfo';
 
-  Future<List<ContactDataModel>> getContactsRepo() async {
+  Future<ListContacts> getContactsRepo() async {
     // either load from Api or from database
     try {
       final willLoadFromAPI = await sharePrefService.isContactsLoadingInit();
@@ -36,10 +37,10 @@ class ContactsRepository {
     }
   }
 
-  Future<List<ContactDataModel>> changeContactsRepo() async {
-    // Completely change contacts
+  Future<ListContacts> changeContactsRepo() async {
+    // Completely change contacts (load new contacts from Api)
     try {
-      await _removeAllContactsRepo();
+      await removeAllContactsRepo();
       return await _loadContactsFromApiAndInsertIntoDb(_apiUrl);
     } catch (e) {
       rethrow;
@@ -56,9 +57,10 @@ class ContactsRepository {
       }
       final extractedData = await contactsApiService.loadContactsData(url);
       final List extractedListData = extractedData['results'].toList();
-      extractedListData.forEach((element) async{
-        loadedContacts.add(ContactDataModel.fromJsonApi(element));
-        await _insertContactIntoDb(ContactDataModel.fromJsonApi(element));
+      extractedListData.forEach((element) async {
+        final contact = ContactDataModel.fromJsonApi(element);
+        loadedContacts.add(contact);
+        await _insertContactIntoDb(contact);
       });
       return loadedContacts;
     } catch (e) {
@@ -116,11 +118,13 @@ class ContactsRepository {
 
   Future<void> removeContactByIdRepo(String contactId) async {
     await sqliteDbService.delete(_nameContactsDbTable,
-        where: "id = \"$contactId\"");
+        where: "id = ?",
+        whereArgs: [contactId]);
+        // where: "id = \"$contactId\"");
     return;
   }
 
-  Future<void> _removeAllContactsRepo() async {
+  Future<void> removeAllContactsRepo() async {
     await sqliteDbService.delete(_nameContactsDbTable);
     return;
   }

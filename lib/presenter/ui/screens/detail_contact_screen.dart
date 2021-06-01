@@ -23,7 +23,6 @@ class DetailContactScreen extends StatelessWidget {
           actions: [
             IconButton(
               onPressed: () {
-                log('$mainTag.onPressed: name: ${contact.name} id: ${contact.id}');
                 Provider.of<Contacts>(context, listen: false)
                     .removeContactById(contact.id);
                 Navigator.of(context).pop();
