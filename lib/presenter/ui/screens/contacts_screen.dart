@@ -12,13 +12,13 @@ class ContactsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('Contacts'),
+          title: const Text('Contacts'),
           centerTitle: true,
           actions: [
             IconButton(
               onPressed: () => Provider.of<Contacts>(context, listen: false)
                   .changeContacts(),
-              icon: Icon(Icons.refresh),
+              icon: const Icon(Icons.refresh),
             )
           ],
         ),
@@ -27,23 +27,23 @@ class ContactsScreen extends StatelessWidget {
               Provider.of<Contacts>(context, listen: false).getContacts(),
           builder: (ctx, snapshot) =>
               snapshot.connectionState == ConnectionState.waiting
-                  ? Center(child: CircularProgressIndicator())
+                  ? const Center(child: CircularProgressIndicator())
                   : snapshot.hasError
                       ? _errorMessage(snapshot.error)
                       : Consumer<Contacts>(
-                          child: Center(
-                            child: const Text(
+                          child: const Center(
+                            child: Text(
                                 'Got no Contacts data yet, start adding some!'),
                           ),
                           builder: (context, userData, childAbove) =>
-                              userData.items.length <= 0
+                              userData.items.isEmpty
                                   ? childAbove!
                                   : ListView.builder(
                                       itemCount: userData.items.length,
                                       itemBuilder: (context, index) {
                                         final users = userData.items;
                                         return users.isEmpty
-                                            ? Text('Empty List')
+                                            ? const Text('Empty List')
                                             : ContactItem(users[index]);
                                       },
                                     ),

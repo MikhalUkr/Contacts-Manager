@@ -1,11 +1,12 @@
 import 'dart:developer';
 
 import 'package:contacts_manager/models/contacts/contact_data_model.dart';
-import 'package:contacts_manager/services/sources/api/contacts_api.dart';
-import 'package:contacts_manager/services/sources/local/share_pref.dart';
-import 'package:contacts_manager/services/sources/local/sqliteDb.dart';
+import 'package:contacts_manager/repositories/abstr_sources/contacts_api_abstr.dart';
+import 'package:contacts_manager/repositories/abstr_sources/share_pref_abstr.dart';
+import 'package:contacts_manager/repositories/abstr_sources/sqlite_db_abstr.dart';
+import 'package:contacts_manager/repositories/models/contact_data_model_repo.dart';
 
-typedef ListContacts = List<ContactDataModel>;
+typedef ListContacts = List<ContactDataModelRepo>;
 typedef Json = Map<String, dynamic>;
 
 class ContactsRepository {
@@ -24,24 +25,24 @@ class ContactsRepository {
   final _apiUrl =
       'https://randomuser.me/api/?results=20&inc=name,picture,email&noinfo';
 
+  /// Completely changes contacts (loads new contacts from the API)
+  Future<ListContacts> changeContactsRepo() async {
+    try {
+      await removeAllContactsRepo();
+      return await _loadContactsFromApiAndInsertIntoDb(_apiUrl);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  /// loads from the API or from the database
   Future<ListContacts> getContactsRepo() async {
-    // either load from Api or from database
     try {
       final willLoadFromAPI = await sharePrefService.isContactsLoadingInit();
       if (willLoadFromAPI) {
         return await _loadContactsFromApiAndInsertIntoDb(_apiUrl);
       }
       return await _loadContactsFromDb();
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  Future<ListContacts> changeContactsRepo() async {
-    // Completely change contacts (load new contacts from Api)
-    try {
-      await removeAllContactsRepo();
-      return await _loadContactsFromApiAndInsertIntoDb(_apiUrl);
     } catch (e) {
       rethrow;
     }
@@ -56,9 +57,9 @@ class ContactsRepository {
         throw 'The [uri] string is not valid as a URI or URI reference!';
       }
       final extractedData = await contactsApiService.loadContactsData(url);
-      final List extractedListData = extractedData['results'].toList();
+      final List<Map<String, dynamic>> extractedListData = (extractedData['results'] as List<Map<String, dynamic>>).toList();
       extractedListData.forEach((element) async {
-        final contact = ContactDataModel.fromJsonApi(element);
+        final contact = ContactDataModelRepo.fromJsonApi(element);
         loadedContacts.add(contact);
         await _insertContactIntoDb(contact);
       });
@@ -89,7 +90,7 @@ class ContactsRepository {
       final extractedListData =
           await sqliteDbService.getData(_nameContactsDbTable);
       extractedListData.forEach((element) {
-        loadedContacts.add(ContactDataModel.fromJsonDb(element));
+        loadedContacts.add(ContactDataModelRepo.fromJsonDb(element));
       });
       return loadedContacts;
     } catch (e) {
@@ -117,10 +118,9 @@ class ContactsRepository {
   }
 
   Future<void> removeContactByIdRepo(String contactId) async {
-    await sqliteDbService.delete(_nameContactsDbTable,
-        where: "id = ?",
-        whereArgs: [contactId]);
-        // where: "id = \"$contactId\"");
+    await sqliteDbService
+        .delete(_nameContactsDbTable, where: "id = ?", whereArgs: [contactId]);
+    // where: "id = \"$contactId\"");
     return;
   }
 

@@ -1,18 +1,17 @@
-import 'package:contacts_manager/presenter/ui/screens/contacts_screen.dart';
-import 'package:contacts_manager/presenter/ui/screens/detail_contact_screen.dart';
-import 'package:contacts_manager/presenter/ui/screens/edit_contact_screen.dart';
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 
 import 'package:contacts_manager/app/service_locator.dart';
 import 'package:contacts_manager/presenter/providers/contacts.dart';
-
+import 'package:contacts_manager/presenter/ui/screens/contacts_screen.dart';
+import 'package:contacts_manager/presenter/ui/screens/detail_contact_screen.dart';
+import 'package:contacts_manager/presenter/ui/screens/edit_contact_screen.dart';
 
 void main() {
   setUp();
-  runApp(MyApp());}
-
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override
@@ -20,7 +19,6 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
         providers: [
           ChangeNotifierProvider<Contacts>(create: (_) => Contacts()),
-
         ],
         child: MaterialApp(
           // supportedLocales: const <Locale>[

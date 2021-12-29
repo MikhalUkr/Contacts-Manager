@@ -1,4 +1,3 @@
-
 import 'dart:developer';
 
 import 'package:contacts_manager/presenter/providers/contacts.dart';
@@ -9,7 +8,7 @@ import 'package:provider/provider.dart';
 
 class DetailContactScreen extends StatelessWidget {
   static const String routeName = '/detail-contact-screen';
-  static const String mainTag = 'DetailContactScreen';
+  static const String mainTag = '## DetailContactScreen';
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +26,7 @@ class DetailContactScreen extends StatelessWidget {
                     .removeContactById(contact.id);
                 Navigator.of(context).pop();
               },
-              icon: Icon(Icons.delete),
+              icon: const Icon(Icons.delete),
               color: Theme.of(context).errorColor,
             )
           ],
@@ -35,18 +34,32 @@ class DetailContactScreen extends StatelessWidget {
         body: Column(children: [
           Center(
             child: ClipOval(
-              // ignore: sized_box_for_whitespace
-              child: Container(
-                // If we want obtain the Circle shape, we are using height == width
-                height: heightDevice / 7.0,
-                width: heightDevice / 7.0,
-                child: Hero(
-                  tag: 'contact-${contact.id}',
-                  transitionOnUserGestures: true,
-                  child: contact.image.isNotEmpty
-                      ? Image.network(contact.image, fit: BoxFit.cover)
-                      : const Icon(Icons.person_pin),
-                ),
+              clipBehavior: Clip.hardEdge,
+              child: Hero(
+                tag: 'contact-${contact.id}',
+                transitionOnUserGestures: true,
+                child: contact.image.isNotEmpty
+                    ? Image.network(
+                        contact.image,
+                        fit: BoxFit.cover,
+                        frameBuilder:
+                            (context, child, frame, wasSynchronouslyLoaded) {
+                          log('$mainTag.Image.network() frame: $frame; wasSynchronouslyLoaded: $wasSynchronouslyLoaded');
+                          if (wasSynchronouslyLoaded) {
+                            return child;
+                          }
+                          return AnimatedOpacity(
+                            opacity: frame == null ? 1 : 0,
+                            duration: const Duration(seconds: 1),
+                            curve: Curves.easeOut,
+                            onEnd: () {},
+                            child: child,
+                          );
+                        },
+                        height: heightDevice / 6.0,
+                        width: heightDevice / 6.0,
+                      )
+                    : const Icon(Icons.person_pin),
               ),
             ),
           ),

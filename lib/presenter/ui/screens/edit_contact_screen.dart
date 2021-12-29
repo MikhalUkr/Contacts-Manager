@@ -66,16 +66,18 @@ class _EditContactScreenState extends State<EditContactScreen> {
         children: [
           Center(
             child: ClipOval(
-              // ignore: sized_box_for_whitespace
-              child: Container(
+              child: FittedBox(
                 // If we want obtain the Circle shape, we are using height == width
-                height: heightDevice / 7.0,
-                width: heightDevice / 7.0,
                 child: Hero(
                   tag: 'contact-${contact?.id}',
                   transitionOnUserGestures: true,
                   child: contact != null
-                      ? Image.network(contact.image, fit: BoxFit.cover)
+                      ? Image.network(
+                          contact.image,
+                          fit: BoxFit.cover,
+                          height: heightDevice / 6.0,
+                          width: heightDevice / 6.0,
+                        )
                       : const Icon(Icons.person_pin),
                 ),
               ),
@@ -108,7 +110,7 @@ class _EditContactScreenState extends State<EditContactScreen> {
                             validator: (value) =>
                                 _validateContactName(value!.trim()),
                             keyboardAppearance: Brightness.dark,
-                            keyboardType: TextInputType.text,
+                            keyboardType: TextInputType.name,
                             decoration: const InputDecoration(
                               labelText: 'Name*',
                               hintText: 'firstName',
@@ -125,7 +127,7 @@ class _EditContactScreenState extends State<EditContactScreen> {
                             validator: (value) =>
                                 _validateContactName(value!.trim()),
                             keyboardAppearance: Brightness.dark,
-                            keyboardType: TextInputType.text,
+                            keyboardType: TextInputType.name,
                             decoration: const InputDecoration(
                               labelText: 'Surname*',
                               hintText: 'secondName',
@@ -142,7 +144,7 @@ class _EditContactScreenState extends State<EditContactScreen> {
                             validator: (value) => _validateEmail(
                                 value!.trim().replaceAll(' ', '')),
                             keyboardAppearance: Brightness.dark,
-                            keyboardType: TextInputType.phone,
+                            keyboardType: TextInputType.emailAddress,
                             decoration: const InputDecoration(
                                 labelText: 'Email*', hintText: 'email'),
                             onSaved: (value) =>

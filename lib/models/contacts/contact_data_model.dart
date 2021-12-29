@@ -15,23 +15,13 @@ class ContactDataModel {
     this.image = '',
   });
 
-  factory ContactDataModel.fromJsonApi(Json json) {
-    // List<Map<String, dynamic>> results = json['results'];
+  factory ContactDataModel.fromJson(Json json) {
     return ContactDataModel(
-        id: DateTime.now().toIso8601String(),
-        name: json['name']['first'],
-        surname: json['name']['last'],
-        email: json['email'],
-        image: json['picture']['large']);
-  }
-
-  factory ContactDataModel.fromJsonDb(Json json) {
-    return ContactDataModel(
-        id: json['id'],
-        name: json['name'],
-        surname: json['surname'],
-        email: json['email'],
-        image: json['image']);
+        id: json['id'] as String,
+        name: json['name'] as String,
+        surname: json['surname'] as String,
+        email: json['email'] as String,
+        image: json['image'] as String);
   }
 
   Json toJson() {

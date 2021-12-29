@@ -1,15 +1,18 @@
 import 'dart:developer';
 
+import 'package:path/path.dart' as path;
 import 'package:sqflite/sqflite.dart' as sql;
 import 'package:sqflite/sqlite_api.dart';
-import 'package:path/path.dart' as path;
+
+import 'package:contacts_manager/repositories/abstr_sources/sqlite_db_abstr.dart';
 
 typedef Json = Map<String, dynamic>;
 
-class SqliteDbService {
+class SqliteDbServiceImpl implements SqliteDbService {
   static const String mainTag = '## SqliteDbService';
   final String nameContactsDbTable = 'contacts';
 
+  @override
   Future<Database> database(String table) async {
     final dbPath = await sql.getDatabasesPath();
     return await sql.openDatabase(
@@ -22,6 +25,23 @@ class SqliteDbService {
     );
   }
 
+  /// This method helps insert a map of [values]
+  /// into the specified [table] and returns the
+  /// id of the last inserted row.
+  ///
+  /// ```
+  ///    var value = {
+  ///      'age': 18,
+  ///      'name': 'value'
+  ///    };
+  ///    int id = await db.insert(
+  ///      'table',
+  ///      value,
+  ///      conflictAlgorithm: ConflictAlgorithm.replace,
+  ///    );
+  /// ```
+  ///
+  /// 0 could be returned for some specific conflict algorithms if not inserted.
   Future<int> insert(String table, Map<String, dynamic> data) async {
     // int count = await (await database(table)).insert(
     //  or:
