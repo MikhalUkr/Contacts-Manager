@@ -33,7 +33,7 @@ class ContactsRepository implements ContactsRepositoryAbstr {
     try {
       await removeAllContactsRepo();
       return await _loadContactsFromApiAndInsertIntoDb(_apiUrl);
-    } catch (e) {
+    } catch (error) {
       rethrow;
     }
   }
@@ -48,7 +48,7 @@ class ContactsRepository implements ContactsRepositoryAbstr {
         return await _loadContactsFromApiAndInsertIntoDb(_apiUrl);
       }
       return await _loadContactsFromDb();
-    } catch (e) {
+    } catch (error) {
       rethrow;
     }
   }
@@ -73,7 +73,7 @@ class ContactsRepository implements ContactsRepositoryAbstr {
         await _insertContactIntoDb(contact);
       });
       return loadedContacts;
-    } catch (e) {
+    } catch (error) {
       // return Future.error('error occured when contacts loaded: $e ');
       rethrow;
     }
@@ -88,7 +88,7 @@ class ContactsRepository implements ContactsRepositoryAbstr {
         'email': contact.email,
         'image': contact.image
       });
-    } catch (e) {
+    } catch (error) {
       rethrow;
     }
     return;
@@ -104,7 +104,7 @@ class ContactsRepository implements ContactsRepositoryAbstr {
         loadedContacts.add(ContactDataModelRepo.fromJsonDb(element));
       });
       return loadedContacts;
-    } catch (e) {
+    } catch (error) {
       rethrow;
     }
   }
@@ -123,7 +123,7 @@ class ContactsRepository implements ContactsRepositoryAbstr {
             'image': contact.image
           },
           where: "id = \"$contactId\"");
-    } catch (e) {
+    } catch (error) {
       rethrow;
     }
     return;
@@ -131,8 +131,12 @@ class ContactsRepository implements ContactsRepositoryAbstr {
 
   @override
   Future<void> removeContactByIdRepo(String contactId) async {
-    await sqliteDbService
-        .delete(_nameContactsDbTable, where: "id = ?", whereArgs: [contactId]);
+    try {
+      await sqliteDbService.delete(_nameContactsDbTable,
+          where: "id = ?", whereArgs: [contactId]);
+    } catch (error) {
+      rethrow;
+    }
     // where: "id = \"$contactId\"");
     return;
   }
@@ -140,7 +144,11 @@ class ContactsRepository implements ContactsRepositoryAbstr {
   @override
   Future<void> removeAllContactsRepo() async {
     log('$mainTag removeAllContactsRepo()');
-    await sqliteDbService.delete(_nameContactsDbTable);
+    try {
+      await sqliteDbService.delete(_nameContactsDbTable);
+    } catch (error) {
+      rethrow;
+    }
     return;
   }
 }
