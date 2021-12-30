@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:contacts_manager/app/service_locator.dart';
-import 'package:contacts_manager/presenter/providers/contacts.dart';
+import 'package:contacts_manager/presenter/providers/contacts/contacts.dart';
 import 'package:contacts_manager/presenter/ui/screens/contacts_screen.dart';
 import 'package:contacts_manager/presenter/ui/screens/detail_contact_screen.dart';
 import 'package:contacts_manager/presenter/ui/screens/edit_contact_screen.dart';

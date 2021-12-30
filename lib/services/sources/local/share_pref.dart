@@ -1,7 +1,7 @@
 import 'package:contacts_manager/repositories/abstr_sources/share_pref_abstr.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class SharePreferencesServiceImpl implements SharePreferencesService{
+class SharePreferencesService implements SharePreferencesServiceAbstr{
   /// if returns [true] - then make loading from an [API]
   /// if [false] - from a [database]
   @override

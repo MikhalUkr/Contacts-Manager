@@ -8,7 +8,7 @@ import 'package:contacts_manager/repositories/abstr_sources/sqlite_db_abstr.dart
 
 typedef Json = Map<String, dynamic>;
 
-class SqliteDbServiceImpl implements SqliteDbService {
+class SqliteDbService implements SqliteDbServiceAbstr {
   static const String mainTag = '## SqliteDbService';
   final String nameContactsDbTable = 'contacts';
 

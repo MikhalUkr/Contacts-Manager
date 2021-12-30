@@ -3,7 +3,7 @@ import 'package:sqflite/sqlite_api.dart';
 
 typedef Json = Map<String, dynamic>;
 
-abstract class SqliteDbService {
+abstract class SqliteDbServiceAbstr {
   Future<Database> database(String table);
 
   /// This method helps insert a map of [values]

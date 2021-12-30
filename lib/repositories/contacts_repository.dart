@@ -1,18 +1,20 @@
 import 'dart:developer';
 
 import 'package:contacts_manager/models/contacts/contact_data_model.dart';
+import 'package:contacts_manager/presenter/providers/contacts/abstract/contacts_repository_abstr.dart';
 import 'package:contacts_manager/repositories/abstr_sources/contacts_api_abstr.dart';
 import 'package:contacts_manager/repositories/abstr_sources/share_pref_abstr.dart';
 import 'package:contacts_manager/repositories/abstr_sources/sqlite_db_abstr.dart';
+import 'package:contacts_manager/repositories/constants/api_constants.dart';
 import 'package:contacts_manager/repositories/models/contact_data_model_repo.dart';
 
 typedef ListContacts = List<ContactDataModelRepo>;
 typedef Json = Map<String, dynamic>;
 
-class ContactsRepository {
-  final ContactsApiService contactsApiService;
-  final SharePreferencesService sharePrefService;
-  final SqliteDbService sqliteDbService;
+class ContactsRepository implements ContactsRepositoryAbstr {
+  final ContactsApiServiceAbstr contactsApiService;
+  final SharePreferencesServiceAbstr sharePrefService;
+  final SqliteDbServiceAbstr sqliteDbService;
 
   ContactsRepository({
     required this.contactsApiService,
@@ -22,11 +24,12 @@ class ContactsRepository {
 
   static const String mainTag = '## ContactsRepository';
   final String _nameContactsDbTable = 'contacts';
-  final _apiUrl =
-      'https://randomuser.me/api/?results=20&inc=name,picture,email&noinfo';
+  final _apiUrl = ApiConstants.loadContactsApi;
 
   /// Completely changes contacts (loads new contacts from the API)
-  Future<ListContacts> changeContactsRepo() async {
+  @override
+  Future<ListContacts> refreshContactsRepo() async {
+    log('$mainTag changeContactsRepo()');
     try {
       await removeAllContactsRepo();
       return await _loadContactsFromApiAndInsertIntoDb(_apiUrl);
@@ -36,7 +39,9 @@ class ContactsRepository {
   }
 
   /// loads from the API or from the database
+  @override
   Future<ListContacts> getContactsRepo() async {
+    log('$mainTag getContactsRepo()');
     try {
       final willLoadFromAPI = await sharePrefService.isContactsLoadingInit();
       if (willLoadFromAPI) {
@@ -51,20 +56,25 @@ class ContactsRepository {
   Future<ListContacts> _loadContactsFromApiAndInsertIntoDb(
       String apiUrl) async {
     final ListContacts loadedContacts = [];
+    log('$mainTag _loadContactsFromApiAndInsertIntoDb()');
     try {
       Uri? url = Uri.tryParse(apiUrl);
       if (url == null) {
         throw 'The [uri] string is not valid as a URI or URI reference!';
       }
       final extractedData = await contactsApiService.loadContactsData(url);
-      final List<Map<String, dynamic>> extractedListData = (extractedData['results'] as List<Map<String, dynamic>>).toList();
+      // log('$mainTag _loadContactsFromApiAndInsertIntoDb() extractedData: $extractedData');
+      final extractedListData = (extractedData['results']).toList();
+      // final List<Map<String, dynamic>> extractedListData =
+      //     (extractedData['results'] as List<Map<String, dynamic>>).toList();
       extractedListData.forEach((element) async {
-        final contact = ContactDataModelRepo.fromJsonApi(element);
+        final contact = ContactDataModelRepo.fromJsonApi(element as Json);
         loadedContacts.add(contact);
         await _insertContactIntoDb(contact);
       });
       return loadedContacts;
     } catch (e) {
+      // return Future.error('error occured when contacts loaded: $e ');
       rethrow;
     }
   }
@@ -86,6 +96,7 @@ class ContactsRepository {
 
   Future<ListContacts> _loadContactsFromDb() async {
     final ListContacts loadedContacts = [];
+    log('$mainTag _loadContactsFromDb()');
     try {
       final extractedListData =
           await sqliteDbService.getData(_nameContactsDbTable);
@@ -98,6 +109,7 @@ class ContactsRepository {
     }
   }
 
+  @override
   Future<void> updateContactByIdRepo(
       String contactId, ContactDataModel contact) async {
     try {
@@ -117,6 +129,7 @@ class ContactsRepository {
     return;
   }
 
+  @override
   Future<void> removeContactByIdRepo(String contactId) async {
     await sqliteDbService
         .delete(_nameContactsDbTable, where: "id = ?", whereArgs: [contactId]);
@@ -124,7 +137,9 @@ class ContactsRepository {
     return;
   }
 
+  @override
   Future<void> removeAllContactsRepo() async {
+    log('$mainTag removeAllContactsRepo()');
     await sqliteDbService.delete(_nameContactsDbTable);
     return;
   }

@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 
 typedef Json = Map<String, dynamic>;
 
-class ContactsApiServiceImpl implements ContactsApiService {
+class ContactsApiService implements ContactsApiServiceAbstr {
   static const String mainTag = '## ContactsApiService';
   Future<Json> loadContactsData(Uri url) async {
     final response = await http.get(url);

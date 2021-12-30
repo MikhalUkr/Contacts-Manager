@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:contacts_manager/presenter/providers/contacts.dart';
+import 'package:contacts_manager/presenter/providers/contacts/contacts.dart';
 import 'package:contacts_manager/presenter/ui/widgets/contact_item_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -17,7 +17,7 @@ class ContactsScreen extends StatelessWidget {
           actions: [
             IconButton(
               onPressed: () => Provider.of<Contacts>(context, listen: false)
-                  .changeContacts(),
+                  .refreshContacts(),
               icon: const Icon(Icons.refresh),
             )
           ],

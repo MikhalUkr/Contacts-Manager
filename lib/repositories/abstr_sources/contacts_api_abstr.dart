@@ -1,5 +1,5 @@
 typedef Json = Map<String, dynamic>;
 
-abstract class ContactsApiService {
+abstract class ContactsApiServiceAbstr {
   Future<Json> loadContactsData(Uri url);
 }

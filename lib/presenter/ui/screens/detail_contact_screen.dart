@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:contacts_manager/presenter/providers/contacts.dart';
+import 'package:contacts_manager/presenter/providers/contacts/contacts.dart';
 import 'package:flutter/material.dart';
 
 import 'package:contacts_manager/models/contacts/contact_data_model.dart';

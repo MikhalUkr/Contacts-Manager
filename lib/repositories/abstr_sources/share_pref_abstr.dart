@@ -1,3 +1,3 @@
-abstract class SharePreferencesService {
+abstract class SharePreferencesServiceAbstr {
   Future<bool> isContactsLoadingInit();
 }

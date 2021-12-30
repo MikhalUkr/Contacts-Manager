@@ -1,3 +1,4 @@
+import 'package:contacts_manager/presenter/providers/contacts/abstract/contacts_repository_abstr.dart';
 import 'package:get_it/get_it.dart';
 
 import 'package:contacts_manager/repositories/abstr_sources/contacts_api_abstr.dart';
@@ -12,17 +13,18 @@ final getIt = GetIt.instance;
 
 void setUp() {
   // started register block for Contacts
-  getIt.registerSingleton<ContactsApiService>(ContactsApiServiceImpl());
+  getIt.registerSingleton<ContactsApiServiceAbstr>(ContactsApiService());
 
-  getIt.registerSingleton<SharePreferencesService>(SharePreferencesServiceImpl());
+  getIt.registerSingleton<SharePreferencesServiceAbstr>(
+      SharePreferencesService());
 
-  getIt.registerSingleton<SqliteDbService>(SqliteDbServiceImpl());
+  getIt.registerSingleton<SqliteDbServiceAbstr>(SqliteDbService());
 
-  getIt.registerLazySingleton<ContactsRepository>(() {
+  getIt.registerLazySingleton<ContactsRepositoryAbstr>(() {
     return ContactsRepository(
-        contactsApiService: GetIt.I.get<ContactsApiService>(),
-        sharePrefService: GetIt.I.get<SharePreferencesService>(),
-        sqliteDbService: GetIt.I.get<SqliteDbService>());
+        contactsApiService: GetIt.I.get<ContactsApiServiceAbstr>(),
+        sharePrefService: GetIt.I.get<SharePreferencesServiceAbstr>(),
+        sqliteDbService: GetIt.I.get<SqliteDbServiceAbstr>());
   });
   // finished register block for Contacts
 }

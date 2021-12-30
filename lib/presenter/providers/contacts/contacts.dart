@@ -1,17 +1,17 @@
 import 'dart:developer';
 
-import 'package:contacts_manager/app/service_locator.dart';
-import 'package:contacts_manager/repositories/contacts_repository.dart';
 import 'package:flutter/cupertino.dart';
 
+import 'package:contacts_manager/app/service_locator.dart';
 import 'package:contacts_manager/models/contacts/contact_data_model.dart';
+import 'package:contacts_manager/presenter/providers/contacts/abstract/contacts_repository_abstr.dart';
 
 typedef Json = Map<String, dynamic>;
 
 class Contacts with ChangeNotifier {
   static const String mainTag = '## Contacts ';
   List<ContactDataModel> _items = [];
-  ContactsRepository _contactsRepository = getIt.get<ContactsRepository>();
+  final _contactsRepository = getIt.get<ContactsRepositoryAbstr>();
 
   List<ContactDataModel> get items {
     return [..._items];
@@ -27,6 +27,7 @@ class Contacts with ChangeNotifier {
   }
 
   Future<void> getContacts() async {
+    log('$mainTag getContacts()');
     try {
       final loadedItems = await _contactsRepository.getContactsRepo();
       _items = loadedItems;
@@ -36,9 +37,9 @@ class Contacts with ChangeNotifier {
     }
   }
 
-  Future<void> changeContacts() async {
+  Future<void> refreshContacts() async {
     try {
-      final loadedItems = await _contactsRepository.changeContactsRepo();
+      final loadedItems = await _contactsRepository.refreshContactsRepo();
       _items = loadedItems;
       notifyListeners();
     } catch (e) {
